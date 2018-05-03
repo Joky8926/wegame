@@ -1,5 +1,5 @@
 
-import Director from "./base/Director"
+import Director from './base/Director'
 
 let instance
 

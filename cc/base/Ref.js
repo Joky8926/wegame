@@ -1,5 +1,5 @@
 
-import PoolManager from "./PoolManager"
+import PoolManager from './PoolManager'
 
 let uObjectCount = 0
 
@@ -10,12 +10,12 @@ export default class Ref {
     }
 
     retain() {
-        console.assert(_referenceCount > 0, "reference count should be greater than 0")
+        console.assert(_referenceCount > 0, 'reference count should be greater than 0')
         ++this._referenceCount
     }
 
     release() {
-        console.assert(_referenceCount > 0, "reference count should be greater than 0")
+        console.assert(_referenceCount > 0, 'reference count should be greater than 0')
         --this._referenceCount
         if (this._referenceCount == 0) {
             let poolManager = PoolManager.getInstance()
