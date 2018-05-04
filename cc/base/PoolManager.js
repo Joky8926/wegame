@@ -19,6 +19,7 @@ export default class PoolManager {
         this._isClearing = true
         for (let key in this._managedObject) {
             this._managedObject[key].release()
+            delete this._managedObject[key]
         }
         this._isClearing = false
     }
