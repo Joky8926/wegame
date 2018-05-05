@@ -1,4 +1,5 @@
 
+import Director     from '../base/Director'
 import Ref          from '../base/Ref'
 import Color3B      from '../base/types/Color3B'
 import Size         from '../math/geometry/Size'
@@ -45,6 +46,7 @@ export default class Node extends Ref {
         this._transform                     = Mat4.IDENTITY
         this._modelViewTransform            = Mat4.IDENTITY
         this._children                      = []
+        this._director                      = Director.getInstance()
     }
 
     onEnter() {

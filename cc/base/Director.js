@@ -13,6 +13,8 @@ export default class Director {
         this._deltaTime         = 0
         this._openGLView        = null
         this._renderer          = new Renderer()
+        this._textureCache      = null
+        this.initTextureCache()
     }
 
     setOpenGLView(openGLView) {
@@ -120,6 +122,14 @@ export default class Director {
 
     showStats() {
 
+    }
+
+    initTextureCache() {
+        this._textureCache = new TextureCache()
+    }
+
+    getTextureCache() {
+        return this._textureCache
     }
 
     static getInstance() {
