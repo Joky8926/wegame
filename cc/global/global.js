@@ -1,0 +1,2 @@
+
+GameGlobal.GL = {}
