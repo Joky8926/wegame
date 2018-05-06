@@ -1,15 +1,9 @@
-const str = `
-attribute vec3 aVertexPosition;
-void main() {
-    gl_Position = vec4(aVertexPosition, 1.0);
-}`
-
-console.log(str)
 
 let gl;
 let canvas;
 let shaderProgram;
 let vertexBuffer;
+let woodTexture;
 
 function createGLContext() {
     canvas = wx.createCanvas()
@@ -33,17 +27,27 @@ function loadShader(type, shaderSource) {
 }
 
 function setupShaders() {
-    var vertexShaderSource =
-        "attribute vec3 aVertexPosition;                 \n" +
-        "void main() {                                   \n" +
-        "  gl_Position = vec4(aVertexPosition, 1.0);     \n" +
-        "}                                               \n";
+    var vertexShaderSource = `
+        attribute vec2 aVertexPosition;
+        attribute vec2 aTextureCoordinates;
 
-    var fragmentShaderSource =
-        "precision mediump float;                    \n" +
-        "void main() {                               \n" +
-        "  gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);  \n" +
-        "}                                           \n";
+        varying vec2 vTextureCoordinates;
+
+        void main() {
+            gl_Position = vec4(aVertexPosition, 0.0, 1.0);
+            vTextureCoordinates = aTextureCoordinates;
+        }`
+
+    var fragmentShaderSource = `
+        precision mediump float;
+
+        uniform sampler2D uSampler;
+
+        varying vec2 vTextureCoordinates;
+
+        void main() {
+            gl_FragColor = texture2D(uSampler, vTextureCoordinates);
+        }`
 
     var vertexShader = loadShader(gl.VERTEX_SHADER, vertexShaderSource);
     var fragmentShader = loadShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
@@ -60,31 +64,77 @@ function setupShaders() {
     gl.useProgram(shaderProgram);
 
     shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+    shaderProgram.vertexTextureAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoordinates");
+    shaderProgram.uniformSamplerLoc = gl.getUniformLocation(shaderProgram, "uSampler");
 }
 
 function setupBuffers() {
     vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     var triangleVertices = [
-        0.0, 0.5, 0.0,
-        -0.5, -0.5, 0.0,
-        0.5, -0.5, 0.0
+        -0.5, -0.5, 0, 0,
+        -0.5, 0.5, 0, 1,
+        0.5, -0.5, 1, 0,
+        0.5, 0.5, 1, 1
     ];
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVertices), gl.STATIC_DRAW);
-    vertexBuffer.itemSize = 3;
-    vertexBuffer.numberOfItems = 3;
+    vertexBuffer.itemSize = 2;
+    vertexBuffer.numberOfItems = 4;
 }
 
 function draw() {
+    console.log('draw image end')
     gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
-        vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, vertexBuffer.itemSize, gl.FLOAT, false, 16, 0);
+    gl.vertexAttribPointer(shaderProgram.vertexTextureAttribute, vertexBuffer.itemSize, gl.FLOAT, false, 16, 8);
 
     gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+    gl.enableVertexAttribArray(shaderProgram.vertexTextureAttribute);
 
-    gl.drawArrays(gl.TRIANGLES, 0, vertexBuffer.numberOfItems);
+    gl.uniform1i(shaderProgram.uniformSamplerLoc, 0);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, woodTexture);
+
+    console.log('bindTexture image end')
+
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, vertexBuffer.numberOfItems);
+    console.log('bindTexture image end2')
+}
+
+function textureFinishedLoading(image, texture) {
+    console.log('textureFinishedLoading image')
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+    console.log('textureFinishedLoading image end')
+    gl.generateMipmap(gl.TEXTURE_2D);
+
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
+    // gl.bindTexture(gl.TEXTURE_2D, null);
+    draw();
+}
+
+function loadImageForTexture(url, texture) {
+    let image = wx.createImage();
+    image.onload = function() {
+        console.log('onload image')
+        textureFinishedLoading(image, texture);
+    }
+    image.src = url;
+}
+
+
+function setupTextures() {
+    woodTexture = gl.createTexture();
+    loadImageForTexture("images/Common.png", woodTexture);
 }
 
 function startup() {
@@ -92,7 +142,7 @@ function startup() {
     setupShaders();
     setupBuffers();
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    draw();
+    setupTextures();
 }
 
 startup();
