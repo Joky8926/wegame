@@ -12,6 +12,7 @@ class Triangles {
 
 export default class TrianglesCommand extends RenderCommand {
     constructor() {
+        super()
         this._triangles     = new Triangles()
         this._materialID    = 0
     }

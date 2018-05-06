@@ -1,5 +1,5 @@
 
-import PoolManager  from './PoolManager'
+// import PoolManager  from './PoolManager'
 import Renderer     from '../renderer/Renderer'
 
 let instance
@@ -41,7 +41,7 @@ export default class Director {
 
     mainLoop() {
         this.drawScene()
-        PoolManager.getInstance().clear()
+        // PoolManager.getInstance().clear()
     }
 
     runWithScene(scene) {
@@ -71,7 +71,7 @@ export default class Director {
     }
 
     drawScene() {
-        calculateDeltaTime()
+        this.calculateDeltaTime()
         // update
         this._renderer.clear()
         // experimental::FrameBuffer::clearAllFBOs()
@@ -84,7 +84,7 @@ export default class Director {
             this._openGLView.renderScene(this._runningScene, this._renderer)
             // _eventDispatcher->dispatchEvent(_eventAfterVisit);
         }
-        if (_displayStats) {
+        if (this._displayStats) {
             this.showStats()
         }
         // _renderer->render();
@@ -125,7 +125,7 @@ export default class Director {
     }
 
     initTextureCache() {
-        this._textureCache = new TextureCache()
+        // this._textureCache = new TextureCache()
     }
 
     getTextureCache() {

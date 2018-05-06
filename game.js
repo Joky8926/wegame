@@ -5,4 +5,4 @@
 
 // new Main()
 
-import './test/test'
+import './test/testmain'

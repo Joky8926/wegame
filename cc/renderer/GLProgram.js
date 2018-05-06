@@ -1,9 +1,9 @@
 
-import Ref from './base/Ref'
+import Ref from '../base/Ref'
 
 export default class GLProgram extends Ref {
     constructor() {
-        
+        super()
     }
 
     bindPredefinedVertexAttribs() {
