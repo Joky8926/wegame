@@ -1,6 +1,6 @@
 
-// import PoolManager  from './PoolManager'
 import Renderer     from '../renderer/Renderer'
+import TextureCache from '../renderer/TextureCache'
 
 let instance
 
@@ -41,7 +41,7 @@ export default class Director {
 
     mainLoop() {
         this.drawScene()
-        // PoolManager.getInstance().clear()
+        // wx.triggerGC()
     }
 
     runWithScene(scene) {
@@ -76,7 +76,7 @@ export default class Director {
         this._renderer.clear()
         // experimental::FrameBuffer::clearAllFBOs()
         if (this._nextScene) {
-            setNextScene()
+            this.setNextScene()
         }
         // pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
         if (this._runningScene) {
@@ -112,10 +112,9 @@ export default class Director {
         if (this._runningScene) {
             this._runningScene.onExit()
             this._runningScene.cleanup()
-            this._runningScene.release()
+            this._runningScene = null
         }
         this._runningScene = this._nextScene
-        this._runningScene.retain()
         this._runningScene.onEnter()
         this._nextScene = null
     }
@@ -125,7 +124,7 @@ export default class Director {
     }
 
     initTextureCache() {
-        // this._textureCache = new TextureCache()
+        this._textureCache = new TextureCache()
     }
 
     getTextureCache() {

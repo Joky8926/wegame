@@ -1,5 +1,6 @@
 
 import Node from './Node'
+import Rect from '../math/geometry/Rect'
 
 export default class Sprite extends Node {
     constructor() {
@@ -15,28 +16,21 @@ export default class Sprite extends Node {
         }
         this._fileName = filename
         this._fileType = 0
+        let texture = this._director.getTextureCache().addImage(filename)
+        let rect    = Rect.ZERO
+        rect.size   = texture.getContentSize()
+        return this.initWithTexture(texture, rect)
+    }
 
-        Texture2D *texture = _director->getTextureCache()->addImage(filename);
-        if (texture)
-        {
-            Rect rect = Rect::ZERO;
-            rect.size = texture->getContentSize();
-            return initWithTexture(texture, rect);
-        }
-
-        // don't release here.
-        // when load texture failed, it's better to get a "transparent" sprite then a crashed program
-        // this->release();
-        return false;
+    initWithTexture(texture, rect) {
+        
     }
 
     static create(filename) {
         const sprite = new Sprite()
         if (sprite.initWithFile(filename)) {
-            sprite.autorelease()
             return sprite
         }
-        sprite.release()
         return null
     }
 }

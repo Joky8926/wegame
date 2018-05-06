@@ -80,7 +80,7 @@ export default class Node extends Ref {
                 this._transform.m[1] *= this._scaleX;
                 this._transform.m[2] *= this._scaleX;
             }
-            if (_scaleY != 1) {
+            if (this._scaleY != 1) {
                 this._transform.m[4] *= this._scaleY;
                 this._transform.m[5] *= this._scaleY;
                 this._transform.m[6] *= this._scaleY;

@@ -7,7 +7,7 @@ const BYTES_PER_ELEMENT = Vec2.BYTES_PER_ELEMENT + Color4B.BYTES_PER_ELEMENT + T
 const U32S_PER_ELEMENT  = BYTES_PER_ELEMENT / Uint32Array.BYTES_PER_ELEMENT
 
 export default class V2F_C4B_T2F {
-    constructor(buffer, byteOffset, length) {
+    constructor(buffer, byteOffset) {
         this._buffer        = buffer
         this._byteOffset    = byteOffset || 0
         this.vertices       = new Vec2(buffer, byteOffset)
