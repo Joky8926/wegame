@@ -1,5 +1,6 @@
 
 import './global/global'
+import './renderer/shader'
 import './renderer/GLStateCache'
 import Scene        from './2d/Scene'
 import Director     from './base/Director'
