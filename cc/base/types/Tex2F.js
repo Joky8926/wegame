@@ -22,6 +22,15 @@ export default class Tex2F {
         this._f32a[1] = value
     }
 
+    set(u, v) {
+        this.u = u
+        this.v = v
+    }
+
+    setWithT2f(t2f) {
+        this.set(t2f.u, t2f.v)
+    }
+
     static create() {
         return new Tex2F([0, 0])
     }

@@ -9,11 +9,12 @@ export default class V2F_C4B_T2F_Quad {
         this.tr = _tr
     }
 
-    cast2ArrV2F_C4B_T2F() {
-
+    getArray() {
+        return this.bl
     }
 
     static create() {
-        return new V2F_C4B_T2F_Quad(V2F_C4B_T2F.create(), V2F_C4B_T2F.create(), V2F_C4B_T2F.create(), V2F_C4B_T2F.create())
+        const arr = V2F_C4B_T2F.create(4)
+        return new V2F_C4B_T2F_Quad(arr, arr.getObjWithOffset(1), arr.getObjWithOffset(2), arr.getObjWithOffset(3))
     }
 }

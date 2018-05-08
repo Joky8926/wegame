@@ -27,6 +27,10 @@ export default class Vec2 {
         this.y = yy
     }
 
+    setWithV2(vec2) {
+        this.set(vec2.x, vec2.y)
+    }
+
     static get ZERO() {
         return new Vec2([0, 0])
     }

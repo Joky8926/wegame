@@ -38,6 +38,17 @@ export default class Color4B {
         this._u8a[3] = value
     }
 
+    set(r, g, b, a) {
+        this.r = r
+        this.g = g
+        this.b = b
+        this.a = a
+    }
+
+    setWithC4b(c4b) {
+        this.set(c4b.r, c4b.g, c4b.b, c4b.a)
+    }
+
     static create(r, g, b, a) {
         return new Color4B([r, g, b, a])
     }

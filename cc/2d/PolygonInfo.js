@@ -9,7 +9,7 @@ export default class PolygonInfo {
     setQuad(quad) {
         this.triangles.vertCount    = 4
         this.triangles.indexCount   = 6
-        this.triangles.verts        = quad
+        this.triangles.verts        = quad.getArray()
     }
 
     static create() {

@@ -10,9 +10,9 @@ export default class V2F_C4B_T2F {
     constructor(buffer, byteOffset) {
         this._buffer        = buffer
         this._byteOffset    = byteOffset || 0
-        this.vertices       = new Vec2(buffer, byteOffset)
-        this.colors         = new Color4B(buffer, byteOffset + Vec2.BYTES_PER_ELEMENT)
-        this.texCoords      = new Tex2F(buffer, byteOffset + Vec2.BYTES_PER_ELEMENT + Color4B.BYTES_PER_ELEMENT)
+        this._vertices      = new Vec2(buffer, byteOffset)
+        this._colors        = new Color4B(buffer, byteOffset + Vec2.BYTES_PER_ELEMENT)
+        this._texCoords     = new Tex2F(buffer, byteOffset + Vec2.BYTES_PER_ELEMENT + Color4B.BYTES_PER_ELEMENT)
     }
 
     memcpy(sizeOffset, verts, count) {
@@ -29,6 +29,34 @@ export default class V2F_C4B_T2F {
 
     getBuffer() {
         return this._buffer
+    }
+
+    getObjWithOffset(offset) {
+        return new V2F_C4B_T2F(this._buffer, this._byteOffset + offset * BYTES_PER_ELEMENT)
+    }
+
+    get vertices() {
+        return this._vertices
+    }
+
+    set vertices(value) {
+        this._vertices.setWithV2(value)
+    }
+
+    get colors() {
+        return this._colors
+    }
+
+    set colors(value) {
+        this._colors.setWithC4b(value)
+    }
+
+    get texCoords() {
+        return this._texCoords
+    }
+
+    set texCoords(value) {
+        this._texCoords.setWithT2f(value)
     }
 
     static create(size = 1) {
