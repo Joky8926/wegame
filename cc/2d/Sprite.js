@@ -1,16 +1,27 @@
 
-import Node         from './Node'
-import Rect         from '../math/geometry/Rect'
-import Size         from '../math/geometry/Size'
-import GLProgram    from '../renderer/GLProgram'
+import Node             from './Node'
+import PolygonInfo      from './PolygonInfo'
+import BlendFunc        from '../base/types/BlendFunc'
+import Color4B          from '../base/types/Color4B'
+import V2F_C4B_T2F_Quad from '../base/types/V2F_C4B_T2F_Quad'
+import Rect             from '../math/geometry/Rect'
+import Size             from '../math/geometry/Size'
+import GLProgram        from '../renderer/GLProgram'
+import GLProgramState   from '../renderer/GLProgramState'
 
 export default class Sprite extends Node {
     constructor() {
         super()
-        this._fileName      = 0
-        this._fileType      = 0
-        this._contentSize   = Size.ZERO
-        this._texture       = null
+        this._contentSize           = Size.ZERO
+        this._blendFunc             = null
+        this._texture               = null
+        this._rect                  = null
+        this._originalContentSize   = Size.ZERO
+        this._quad                  = null
+        this._polyInfo              = PolygonInfo.create()
+        this._opacityModifyRGB      = false
+        this._fileName              = 0
+        this._fileType              = 0
     }
 
     initWithFile(filename) {
@@ -29,57 +40,94 @@ export default class Sprite extends Node {
     initWithTexture(texture, rect) {
         // _recursiveDirty = false;
         // setDirty(false);
-        // _opacityModifyRGB = true;
-        // _blendFunc = BlendFunc::ALPHA_PREMULTIPLIED;
+        this._opacityModifyRGB = true
+        this._blendFunc = BlendFunc.ALPHA_PREMULTIPLIED
         // _flippedX = _flippedY = false;
         // setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         // _offsetPosition.setZero();
-
-        // clean the Quad
-        // memset(&_quad, 0, sizeof(_quad));
-
-        // _quad.bl.colors = Color4B::WHITE;
-        // _quad.br.colors = Color4B::WHITE;
-        // _quad.tl.colors = Color4B::WHITE;
-        // _quad.tr.colors = Color4B::WHITE;
+        this._quad = V2F_C4B_T2F_Quad.create()
+        this._quad.bl.colors = Color4B.WHITE
+        this._quad.br.colors = Color4B.WHITE
+        this._quad.tl.colors = Color4B.WHITE
+        this._quad.tr.colors = Color4B.WHITE
         this.setTexture(texture)
-        setTextureRect(rect, rotated, rect.size);
+        this.setTextureRect(rect, rect.size)
         _recursiveDirty = true;
         setDirty(true);
     }
 
     setTexture(texture) {
-        setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram.SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP, texture));
+        this.setGLProgramState(GLProgramState.getOrCreateWithGLProgramName(GLProgram.SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP, texture))
+        if (this._texture != texture) {
+            this._texture = texture
+            this.updateBlendFunc()
+        }
+    }
 
-        // // If batchnode, then texture id should be the same
-        // CCASSERT(! _batchNode || (texture &&  texture->getName() == _batchNode->getTexture()->getName()), "CCSprite: Batched sprites should use the same texture as the batchnode");
-        // // accept texture==nil as argument
-        // CCASSERT( !texture || dynamic_cast<Texture2D*>(texture), "setTexture expects a Texture2D. Invalid argument");
+    updateBlendFunc() {
+        this._blendFunc = BlendFunc.ALPHA_NON_PREMULTIPLIED
+        this.setOpacityModifyRGB(false)
+    }
 
-        // if (texture == nullptr)
-        // {
-        //     // Gets the texture by key firstly.
-        //     texture = _director->getTextureCache()->getTextureForKey(CC_2x2_WHITE_IMAGE_KEY);
+    setOpacityModifyRGB(modify) {
+        if (this._opacityModifyRGB != modify) {
+            this._opacityModifyRGB = modify
+            this.updateColor()
+        }
+    }
 
-        //     // If texture wasn't in cache, create it from RAW data.
-        //     if (texture == nullptr)
-        //     {
-        //         Image* image = new (std::nothrow) Image();
-        //         bool CC_UNUSED isOK = image->initWithRawData(cc_2x2_white_image, sizeof(cc_2x2_white_image), 2, 2, 8);
-        //         CCASSERT(isOK, "The 2x2 empty texture was created unsuccessfully.");
+    updateColor() {
+        let color4 = Color4B.create(this._displayedColor.r, this._displayedColor.g, this._displayedColor.b, this._displayedOpacity)
+        if (this._opacityModifyRGB) {
+            color4.r *= this._displayedOpacity / 255
+            color4.g *= this._displayedOpacity / 255
+            color4.b *= this._displayedOpacity / 255
+        }
+    }
 
-        //         texture = _director->getTextureCache()->addImage(image, CC_2x2_WHITE_IMAGE_KEY);
-        //         CC_SAFE_RELEASE(image);
-        //     }
-        // }
+    setTextureRect(rect, untrimmedSize) {
+        super.setContentSize(untrimmedSize)
+        this._originalContentSize = untrimmedSize
+        this.setVertexRect(rect)
+        // updateStretchFactor()
+        this.updatePoly()
+    }
 
-        // if ((_renderMode != RenderMode::QUAD_BATCHNODE) && (_texture != texture))
-        // {
-        //     CC_SAFE_RETAIN(texture);
-        //     CC_SAFE_RELEASE(_texture);
-        //     _texture = texture;
-        //     updateBlendFunc();
-        // }
+    setVertexRect(rect) {
+        this._rect = rect
+    }
+
+    updatePoly() {
+        const copyRect = new Rect(0, 0, this._rect.size.width, this._rect.size.height)
+        this.setTextureCoords(_rect, _quad)
+        this.setVertexCoords(copyRect, _quad)
+        this._polyInfo.setQuad(_quad)
+    }
+
+    setTextureCoords(rectInPoints, outQuad) {
+        const left      = 0
+        const right     = 1
+        const top       = 0
+        const bottom    = 1
+        outQuad.bl.texCoords.u = left
+        outQuad.bl.texCoords.v = bottom
+        outQuad.br.texCoords.u = right
+        outQuad.br.texCoords.v = bottom
+        outQuad.tl.texCoords.u = left
+        outQuad.tl.texCoords.v = top
+        outQuad.tr.texCoords.u = right
+        outQuad.tr.texCoords.v = top
+    }
+
+    setVertexCoords(rect, outQuad) {
+        const x1 = rect.origin.x
+        const y1 = rect.origin.y
+        const x2 = x1 + rect.size.width
+        const y2 = y1 + rect.size.height
+        outQuad.bl.vertices.set(x1, y1)
+        outQuad.br.vertices.set(x2, y1)
+        outQuad.tl.vertices.set(x1, y2)
+        outQuad.tr.vertices.set(x2, y2)
     }
 
     draw(renderer, transform, flags) {

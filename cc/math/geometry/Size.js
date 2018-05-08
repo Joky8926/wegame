@@ -6,6 +6,10 @@ export default class Size {
         this._f32a = new Float32Array(buffer, byteOffset, length)
     }
 
+    equals(target) {
+        return this.width == target.width && this.height == target.height
+    }
+
     get width() {
         return this._f32a[0]
     }

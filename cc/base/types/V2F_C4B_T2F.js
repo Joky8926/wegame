@@ -31,7 +31,7 @@ export default class V2F_C4B_T2F {
         return this._buffer
     }
 
-    static create(size) {
+    static create(size = 1) {
         let buffer = new ArrayBuffer(BYTES_PER_ELEMENT * size)
         return new V2F_C4B_T2F(buffer)
     }

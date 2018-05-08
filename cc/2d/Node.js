@@ -61,6 +61,16 @@ export default class Node extends Ref {
 
     }
 
+    setContentSize(size) {
+        if (!size.equals(this._contentSize)) {
+            this._contentSize       = size
+            this._transformUpdated  = true
+            this._transformDirty    = true
+            this._inverseDirty      = true
+            this._contentSizeDirty  = true
+        }
+    }
+
     getNodeToParentTransform() {
         if (this._transformDirty) {
             let x = this._position.x

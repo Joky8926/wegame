@@ -1,19 +1,11 @@
 
-import RenderCommand from './RenderCommand'
-
-class Triangles {
-    constructor() {
-        this.verts      = null
-        this.indices    = null
-        this.vertCount  = 0
-        this.indexCount = 0
-    }
-}
+import RenderCommand    from './RenderCommand'
+import Triangles        from './Triangles'
 
 export default class TrianglesCommand extends RenderCommand {
     constructor() {
         super()
-        this._triangles     = new Triangles()
+        this._triangles     = Triangles.create()
         this._materialID    = 0
     }
 

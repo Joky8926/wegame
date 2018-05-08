@@ -38,8 +38,12 @@ export default class Color4B {
         this._u8a[3] = value
     }
 
-    static create() {
-        return new Color4B([0, 0, 0, 0])
+    static create(r, g, b, a) {
+        return new Color4B([r, g, b, a])
+    }
+
+    static get WHITE() {
+        return this.create(255, 255, 255, 255)
     }
 
     static get BYTES_PER_ELEMENT() {

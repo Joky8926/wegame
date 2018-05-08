@@ -29,6 +29,8 @@ export default class GLProgramCache extends Ref {
                 p.initWithByteArrays(ccPositionTextureColor_noMVP_vert, ccPositionTextureColor_noMVP_frag)
                 break
         }
+        p.link()
+        p.updateUniforms()
     }
 
     getGLProgram(key) {

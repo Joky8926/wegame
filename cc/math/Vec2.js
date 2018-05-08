@@ -22,6 +22,11 @@ export default class Vec2 {
         this._f32a[1] = value
     }
 
+    set(xx, yy) {
+        this.x = xx
+        this.y = yy
+    }
+
     static get ZERO() {
         return new Vec2([0, 0])
     }
