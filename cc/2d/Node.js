@@ -136,4 +136,17 @@ export default class Node extends Ref {
     transform(parentTransform) {
         return Mat4.multiply(parentTransform, this.getNodeToParentTransform())
     }
+
+    getGLProgramState() {
+        return this._glProgramState
+    }
+
+
+    setGLProgramState(glProgramState) {
+        if (glProgramState != this._glProgramState) {
+            this._glProgramState = glProgramState
+            if (this._glProgramState)
+                this._glProgramState.setNodeBinding(this)
+        }
+    }
 }

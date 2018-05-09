@@ -32,4 +32,8 @@ export default class TrianglesCommand extends RenderCommand {
     useMaterial() {
         
     }
+
+    static create() {
+        return new TrianglesCommand()
+    }
 }

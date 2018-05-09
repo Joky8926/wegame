@@ -142,6 +142,7 @@ GLProgram.VERTEX_ATTRIB_COLOR       = 0
 GLProgram.VERTEX_ATTRIB_TEX_COORD   = 0
 
 GLProgram.SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP = 'ShaderPositionTextureColor_noMVP'
+GLProgram.SHADER_NAME_POSITION_TEXTURE              = 'ShaderPositionTexture'
 
 GLProgram.UNIFORM_NAME_SAMPLER0 = 'CC_Texture0'
 

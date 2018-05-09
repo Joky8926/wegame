@@ -26,8 +26,12 @@ export default class Size {
         this._f32a[1] = value
     }
 
+    static create(width, height) {
+        return new Size([width, height])
+    }
+
     static get ZERO() {
-        return new Size([0, 0])
+        return this.create(0, 0)
     }
 
     static get BYTES_PER_ELEMENT() {

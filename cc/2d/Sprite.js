@@ -8,6 +8,7 @@ import Rect             from '../math/geometry/Rect'
 import Size             from '../math/geometry/Size'
 import GLProgram        from '../renderer/GLProgram'
 import GLProgramState   from '../renderer/GLProgramState'
+import TrianglesCommand from '../renderer/TrianglesCommand'
 
 export default class Sprite extends Node {
     constructor() {
@@ -15,6 +16,7 @@ export default class Sprite extends Node {
         this._contentSize           = Size.ZERO
         this._blendFunc             = null
         this._texture               = null
+        this._trianglesCommand      = TrianglesCommand.create()
         this._rect                  = null
         this._originalContentSize   = Size.ZERO
         this._quad                  = null
@@ -99,9 +101,9 @@ export default class Sprite extends Node {
 
     updatePoly() {
         const copyRect = new Rect(0, 0, this._rect.size.width, this._rect.size.height)
-        this.setTextureCoords(_rect, _quad)
-        this.setVertexCoords(copyRect, _quad)
-        this._polyInfo.setQuad(_quad)
+        this.setTextureCoords(this._rect, this._quad)
+        this.setVertexCoords(copyRect, this._quad)
+        this._polyInfo.setQuad(this._quad)
     }
 
     setTextureCoords(rectInPoints, outQuad) {
@@ -135,7 +137,8 @@ export default class Sprite extends Node {
             return
         }
         if (renderer.checkVisibility(transform, this._contentSize)) {
-
+            // _trianglesCommand.init(_globalZOrder, _texture, getGLProgramState(), _blendFunc, _polyInfo.triangles, transform, flags);
+            // renderer->addCommand(&_trianglesCommand);
         }
     }
 

@@ -179,4 +179,8 @@ export default class Renderer {
         this._filledVertex              = 0
         this._filledIndex               = 0
     }
+
+    checkVisibility() {
+        return true
+    }
 }

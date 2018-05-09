@@ -26,3 +26,25 @@ void main() {
     gl_FragColor = v_fragmentColor * texture2D(CC_Texture0, v_texCoord);
 }
 `
+
+GameGlobal.ccPositionTexture_vert = `
+attribute vec2 a_position;
+attribute vec2 a_texCoord;
+
+varying mediump vec2 v_texCoord;
+
+void main() {
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    v_texCoord = a_texCoord;
+}
+`
+
+GameGlobal.ccPositionTexture_frag = `
+precision lowp float;
+
+varying vec2 v_texCoord;
+
+void main() {
+    gl_FragColor =  texture2D(CC_Texture0, v_texCoord);
+}
+`
