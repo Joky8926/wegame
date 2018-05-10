@@ -50,7 +50,19 @@ export default class Node extends Ref {
     }
 
     onEnter() {
-        
+        this._isTransitionFinished = false
+        for (let i = 0; i < this._children.length; i++) {
+            this._children[i].onEnter()
+        }
+        // this.resume()
+        this._running = true
+    }
+
+    onEnterTransitionDidFinish() {
+        this._isTransitionFinished = true
+        for (let i = 0; i < this._children.length; i++) {
+            this._children[i].onEnterTransitionDidFinish()
+        }
     }
 
     onExit() {
@@ -146,5 +158,37 @@ export default class Node extends Ref {
         if (glProgramState != this._glProgramState) {
             this._glProgramState = glProgramState
         }
+    }
+
+    addChild(child) {
+        this.insertChild(child)
+    }
+
+    insertChild(child) {
+        this._transformUpdated = true
+        this._reorderChildDirty = true
+        this._children.push(child)
+        child.setParent(this)
+        if (this._running) {
+            child.onEnter()
+            if (this._isTransitionFinished) {
+                child.onEnterTransitionDidFinish()
+            }
+        }
+        // if (_cascadeColorEnabled)
+        // {
+        //     updateCascadeColor();
+        // }
+        // if (_cascadeOpacityEnabled)
+        // {
+        //     updateCascadeOpacity();
+        // }
+    }
+
+    setParent(parent) {
+        this._parent            = parent
+        this._transformUpdated  = true
+        this._transformDirty    = true
+        this._inverseDirty      = true
     }
 }

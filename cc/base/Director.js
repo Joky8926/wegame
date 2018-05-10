@@ -116,6 +116,7 @@ export default class Director {
         }
         this._runningScene = this._nextScene
         this._runningScene.onEnter()
+        this._runningScene.onEnterTransitionDidFinish()
         this._nextScene = null
     }
 
