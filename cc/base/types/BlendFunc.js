@@ -12,4 +12,8 @@ export default class BlendFunc {
     static get ALPHA_NON_PREMULTIPLIED() {
         return new BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
     }
+
+    static get DISABLE() {
+        return new BlendFunc(gl.ONE, gl.ZERO)
+    }
 }

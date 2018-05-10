@@ -1,16 +1,33 @@
 
+import BlendFunc        from '../base/types/BlendFunc'
 import RenderCommand    from './RenderCommand'
 import Triangles        from './Triangles'
 
 export default class TrianglesCommand extends RenderCommand {
     constructor() {
         super()
-        this._triangles     = Triangles.create()
-        this._materialID    = 0
+        this._triangles         = null
+        this._mv                = null
+        this._textureID         = null
+        this._blendType         = BlendFunc.DISABLE
+        this._glProgramState    = null
     }
 
-    getMaterialID() {
-        return this._materialID
+    init(textureID, glProgramState, blendType, triangles, mv, flags) {
+        this._triangles = triangles
+        this._mv = mv
+        if (this._textureID != textureID || this._blendType.src != blendType.src || this._blendType.dst != blendType.dst ||  this._glProgramState != glProgramState) {
+            this._textureID         = textureID
+            this._blendType         = blendType
+            this._glProgramState    = glProgramState
+        }
+    }
+
+    sameAs(cmd) {
+        if (!cmd) {
+            return false
+        }
+        return this._textureID == cmd._textureID && this._blendType.src == cmd._blendType.src && this._blendType.dst == cmd._blendType.dst &&  this._glProgramState == cmd._glProgramState
     }
 
     getVertexCount() {

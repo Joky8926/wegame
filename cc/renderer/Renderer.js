@@ -99,7 +99,7 @@ export default class Renderer {
         this._filledVertex  = 0
         this._filledIndex   = 0
         let batchesTotal    = 0
-        let prevMaterialID  = -1
+        let prevCommand     = null
         let firstCommand    = true
         let cmd             = null
         if (this._triBatchesToDraw[0]) {
@@ -109,12 +109,11 @@ export default class Renderer {
         }
         for (let i = 0; i < this._queuedTriangleCommands.length; i++) {
             cmd = this._queuedTriangleCommands[i]
-            const currentMaterialID = cmd.getMaterialID()
             this.fillVerticesAndIndices(cmd)
             if (!this._triBatchesToDraw[batchesTotal]) {
                 this._triBatchesToDraw[batchesTotal] = new TriBatchToDraw()
             }
-            if (prevMaterialID == currentMaterialID || firstCommand) {
+            if (cmd.sameAs(prevCommand) || firstCommand) {
                 this._triBatchesToDraw[batchesTotal].indicesToDraw += cmd.getIndexCount()
                 this._triBatchesToDraw[batchesTotal].cmd = cmd
             } else {
@@ -125,7 +124,7 @@ export default class Renderer {
                 this._triBatchesToDraw[batchesTotal].cmd = cmd
                 this._triBatchesToDraw[batchesTotal].indicesToDraw = cmd.getIndexCount()
             }
-            prevMaterialID  = currentMaterialID
+            prevCommand     = cmd
             firstCommand    = false
         }
         batchesTotal++
@@ -175,12 +174,18 @@ export default class Renderer {
     }
 
     clean() {
+        this._commands                  = []
         this._queuedTriangleCommands    = []
         this._filledVertex              = 0
         this._filledIndex               = 0
     }
 
     checkVisibility() {
+        // TODO
         return true
+    }
+
+    addCommand(command) {
+        this._commands.push(command)
     }
 }

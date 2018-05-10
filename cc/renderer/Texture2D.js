@@ -39,4 +39,8 @@ export default class Texture2D extends Ref {
     getContentSize() {
         return this._contentSize
     }
+
+    getName() {
+        return self._name
+    }
 }

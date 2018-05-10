@@ -137,7 +137,7 @@ export default class Sprite extends Node {
             return
         }
         if (renderer.checkVisibility(transform, this._contentSize)) {
-            // _trianglesCommand.init(_globalZOrder, _texture, getGLProgramState(), _blendFunc, _polyInfo.triangles, transform, flags);
+            this._trianglesCommand.init(this._texture.getName(), this.getGLProgramState(), this._blendFunc, this._polyInfo.triangles, transform, flags)
             // renderer->addCommand(&_trianglesCommand);
         }
     }
