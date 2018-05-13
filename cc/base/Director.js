@@ -1,37 +1,64 @@
 
 import Renderer     from '../renderer/Renderer'
 import TextureCache from '../renderer/TextureCache'
+import Size         from '../math/geometry/Size'
+import Mat4         from '../math/Mat4'
+
+MATRIX_STACK_TYPE.MATRIX_STACK_PROJECTION = 1
 
 let instance
 
 export default class Director {
     constructor() {
-        this._runningScene      = null
-        this._nextScene         = null
-        this._totalFrames       = 0
-        this._lastUpdate        = wx.getPerformance().now()
-        this._deltaTime         = 0
-        this._openGLView        = null
-        this._renderer          = new Renderer()
-        this._textureCache      = null
+        this._runningScene              = null
+        this._nextScene                 = null
+        this._totalFrames               = 0
+        this._lastUpdate                = wx.getPerformance().now()
+        this._deltaTime                 = 0
+        this._openGLView                = null
+        this._renderer                  = new Renderer()
+        this._textureCache              = null
+        this._winSizeInPoints           = Size.ZERO
+        this._projectionMatrixStackList = []
         this.initTextureCache()
     }
 
     setOpenGLView(openGLView) {
         this._openGLView = openGLView
+        this._winSizeInPoints = this._openGLView.getDesignResolutionSize()
         this.setGLDefaultValues()
         this._renderer.initGLView()
     }
 
     setGLDefaultValues() {
         console.assert(this._openGLView, "opengl view should not be null")
-        // setAlphaBlending(true);
+        this.setAlphaBlending(true)
         this.setDepthTest(false)
-        // setProjection(_projection);
+        this.setProjection()
+    }
+
+    setAlphaBlending(on) {
+        if (on) {
+            GL.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
+        } else {
+            GL.blendFunc(gl.ONE, gl.ZERO)
+        }
     }
 
     setDepthTest(on) {
         this._renderer.setDepthTest(on)
+    }
+
+    setProjection() {
+        const size = this._winSizeInPoints
+        const orthoMatrix = Mat4.createOrthographicOffCenter(0, size.width, 0, size.height, -1024, 1024)
+        this.loadMatrix(MATRIX_STACK_TYPE.MATRIX_STACK_PROJECTION, orthoMatrix)
+    }
+
+    loadMatrix(type, mat) {
+        if (MATRIX_STACK_TYPE.MATRIX_STACK_PROJECTION == type) {
+            this._projectionMatrixStackList[0] = mat
+        }
     }
 
     setAnimationInterval(interval) {
@@ -130,6 +157,12 @@ export default class Director {
 
     getTextureCache() {
         return this._textureCache
+    }
+
+    getMatrix(type) {
+        if (type == MATRIX_STACK_TYPE.MATRIX_STACK_PROJECTION) {
+            return this._projectionMatrixStackList[0]
+        }
     }
 
     static getInstance() {

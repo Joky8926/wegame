@@ -1,8 +1,7 @@
 
 export default class Mat4 {
-    constructor(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44) {
-        this.m = []
-        this.set(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44)
+    constructor() {
+        this.m = new Float32Array(16)
     }
 
     set(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44) {
@@ -24,6 +23,11 @@ export default class Mat4 {
         this.m[15] = m44
     }
 
+    static create(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44) {
+        let mat4 = new Mat4()
+        mat4.set(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44)
+        return mat4
+    }
 
     static createTranslation(xTranslation, yTranslation, zTranslation) {
         let dst = this.IDENTITY
@@ -67,6 +71,19 @@ export default class Mat4 {
         dst.m[15] = 1
     }
 
+    static createOrthographicOffCenter(left, right, bottom, top, zNearPlane, zFarPlane) {
+        let dst     = this.ZERO
+        dst.m[0]    = 2 / (right - left)
+        dst.m[5]    = 2 / (top - bottom)
+        dst.m[10]   = 2 / (zNearPlane - zFarPlane)
+
+        dst.m[12]   = (left + right) / (left - right)
+        dst.m[13]   = (top + bottom) / (bottom - top)
+        dst.m[14]   = (zNearPlane + zFarPlane) / (zNearPlane - zFarPlane)
+        dst.m[15]   = 1
+        return dst
+    }
+
     static multiply(m1, m2) {
         let product = []
         product[0]  = m1[0] * m2[0]  + m1[4] * m2[1] + m1[8]   * m2[2]  + m1[12] * m2[3]
@@ -88,11 +105,11 @@ export default class Mat4 {
         product[13] = m1[1] * m2[12] + m1[5] * m2[13] + m1[9]  * m2[14] + m1[13] * m2[15]
         product[14] = m1[2] * m2[12] + m1[6] * m2[13] + m1[10] * m2[14] + m1[14] * m2[15]
         product[15] = m1[3] * m2[12] + m1[7] * m2[13] + m1[11] * m2[14] + m1[15] * m2[15]
-        return new Mat4(...product)
+        return Mat4.create(...product)
     }
 
     static get IDENTITY() {
-        return new Mat4(
+        return Mat4.create(
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
@@ -100,7 +117,7 @@ export default class Mat4 {
     }
 
     static get ZERO() {
-        return new Mat4(
+        return Mat4.create(
             0, 0, 0, 0,
             0, 0, 0, 0,
             0, 0, 0, 0,

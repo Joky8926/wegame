@@ -8,6 +8,15 @@ class VertexAttrib {
         this.type   = gl.FLOAT
         this.name   = ''
     }
+
+    clone() {
+        let ret     = new VertexAttrib()
+        ret.index   = this.index
+        ret.size    = this.size
+        ret.type    = this.type
+        ret.name    = this.name
+        return ret
+    }
 }
 
 class Uniform {
@@ -16,6 +25,15 @@ class Uniform {
         this.size       = 0
         this.type       = gl.FLOAT
         this.name       = ''
+    }
+
+    clone() {
+        let ret         = new Uniform()
+        ret.location    = this.location
+        ret.size        = this.size
+        ret.type        = this.type
+        ret.name        = this.name
+        return ret
     }
 }
 
@@ -28,6 +46,7 @@ export default class GLProgram extends Ref {
         this._vertexAttribs     = {}
         this._userUniforms      = {}
         this._hashForUniforms   = {}
+        this._director          = Director.getInstance()
     }
 
     bindPredefinedVertexAttribs() {
@@ -86,7 +105,6 @@ export default class GLProgram extends Ref {
             for (let i = 0; i < activeUniforms; ++i) {
                 let uniform = new Uniform()
                 const info = gl.getActiveUniform(this._program, i)
-                const info = gl.getActiveAttrib(this._program, i)
                 uniform.name = info.name
                 uniform.type = info.type
                 uniform.size = info.size
@@ -125,6 +143,13 @@ export default class GLProgram extends Ref {
         }
     }
 
+    setUniformLocationWithMatrix4fv(location, matrixArray) {
+        const updated = updateUniformLocation(location, matrixArray)
+        if (updated) {
+            gl.uniformMatrix4fv(location, GL_FALSE, matrixArray)
+        }
+    }
+
     updateUniformLocation(location, data) {
         if (location < 0) {
             return false
@@ -135,6 +160,21 @@ export default class GLProgram extends Ref {
         }
         return true
     }
+
+    setUniformsForBuiltins() {
+        const matrixP = this._director.getMatrix(MATRIX_STACK_TYPE.MATRIX_STACK_PROJECTION)
+        if (this._userUniforms[GLProgram.UNIFORM_NAME_P_MATRIX]) {
+            this.setUniformLocationWithMatrix4fv(this._userUniforms[GLProgram.UNIFORM_NAME_P_MATRIX].location, matrixP.m)
+        }
+    }
+
+    getUniform(name) {
+        return this._userUniforms[name]
+    }
+
+    getVertexAttrib(name) {
+        return this._vertexAttribs[name]
+    }
 }
 
 GLProgram.VERTEX_ATTRIB_POSITION    = 0
@@ -144,6 +184,7 @@ GLProgram.VERTEX_ATTRIB_TEX_COORD   = 0
 GLProgram.SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP = 'ShaderPositionTextureColor_noMVP'
 GLProgram.SHADER_NAME_POSITION_TEXTURE              = 'ShaderPositionTexture'
 
+GLProgram.UNIFORM_NAME_P_MATRIX = 'CC_PMatrix'
 GLProgram.UNIFORM_NAME_SAMPLER0 = 'CC_Texture0'
 
 GLProgram.ATTRIBUTE_NAME_COLOR      = 'a_color'

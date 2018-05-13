@@ -7,6 +7,8 @@ const VERTEX_ATTRIB_FLAG_POS_COLOR_TEX  = VERTEX_ATTRIB_FLAG_POSITION | VERTEX_A
 let s_attributeFlags = 0
 let s_currentShaderProgram  = null
 let s_currentBoundTexture   = []
+let s_blendingSource        = -1
+let s_blendingDest          = -1
 let s_activeTexture         = null
 
 GL.enableVertexAttribs = function (flags) {
@@ -47,6 +49,27 @@ GL.bindTexture2DN = function (textureUnit, textureId) {
 GL.activeTexture = function (texture) {
     if (s_activeTexture != texture) {
         s_activeTexture = texture
-        glActiveTexture(s_activeTexture)
+        gl.activeTexture(s_activeTexture)
+    }
+}
+
+function setBlending(sfactor, dfactor) {
+    if (sfactor == gl.ONE && dfactor == gl.ZERO) {
+        gl.disable(gl.BLEND)
+        // RenderState::StateBlock::_defaultState->setBlend(false);
+    } else {
+        gl.enable(gl.BLEND)
+        gl.blendFunc(sfactor, dfactor)
+        // RenderState::StateBlock::_defaultState->setBlend(true);
+        // RenderState::StateBlock::_defaultState->setBlendSrc((RenderState::Blend)sfactor);
+        // RenderState::StateBlock::_defaultState->setBlendDst((RenderState::Blend)dfactor);
+    }
+}
+
+GL.blendFunc = function (sfactor, dfactor) {
+    if (sfactor != s_blendingSource || dfactor != s_blendingDest) {
+        s_blendingSource = sfactor
+        s_blendingDest = dfactor
+        setBlending(sfactor, dfactor)
     }
 }

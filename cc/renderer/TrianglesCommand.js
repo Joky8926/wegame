@@ -47,7 +47,9 @@ export default class TrianglesCommand extends RenderCommand {
     }
 
     useMaterial() {
-        
+        GL.bindTexture2D(this._textureID)
+        GL.blendFunc(this._blendType.src, this._blendType.dst)
+        this._glProgramState.apply(this._mv)
     }
 
     static create() {

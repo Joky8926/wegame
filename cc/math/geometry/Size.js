@@ -10,6 +10,10 @@ export default class Size {
         return this.width == target.width && this.height == target.height
     }
 
+    clone() {
+        return Size.create(this.width, this.height)
+    }
+
     get width() {
         return this._f32a[0]
     }
