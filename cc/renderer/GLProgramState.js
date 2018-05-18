@@ -1,6 +1,6 @@
 
-import Ref                  from '../base/Ref'
-import GLProgramStateCache  from './GLProgramStateCache'
+import Ref              from '../base/Ref'
+import GLProgramCache   from './GLProgramCache'
 
 const Type = {}
 Type.VALUE          = 0

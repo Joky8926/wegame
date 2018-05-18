@@ -10,7 +10,7 @@ export default class Texture2D extends Ref {
         self._pixelsWide    = 0
         self._pixelsHigh    = 0
         self._name          = null
-        this._contentSize   = null
+        this._contentSize   = Size.ZERO
         this._shaderProgram = null
     }
 
@@ -18,7 +18,7 @@ export default class Texture2D extends Ref {
         const imageWidth    = image.getWidth()
         const imageHeight   = image.getHeight()
         const data          = image.getData()
-        this.initWithData(data, imageWidth, imageHeight)
+        this.initWithMipmaps(data, imageWidth, imageHeight)
     }
 
     initWithMipmaps(data, pixelsWide, pixelsHigh) {

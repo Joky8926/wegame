@@ -14,9 +14,12 @@ export default class TextureCache extends Ref {
         if (!texture) {
             let image   = new Image()
             texture     = new Texture2D()
-            image.initWithImageFile(path)
-            texture.initWithImage(image)
-            this._textures[path] = texture
+            function callback() {
+                console.log('onLoad')
+                texture.initWithImage(image)
+                this._textures[path] = texture
+            }
+            image.initWithImageFile(path, callback)
         }
         return texture
     }

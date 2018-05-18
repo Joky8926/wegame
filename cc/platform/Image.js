@@ -7,9 +7,10 @@ export default class Image extends Ref {
         self._data = null
     }
 
-    initWithImageFile(path) {
+    initWithImageFile(path, callback) {
         self._data      = wx.createImage()
         self._data.src  = path
+        self._data.onload = callback
     }
 
     getData() {

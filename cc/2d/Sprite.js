@@ -27,16 +27,12 @@ export default class Sprite extends Node {
     }
 
     initWithFile(filename) {
-        if (!filename || filename.trim().length == 0) {
-            console.log('Call Sprite::initWithFile with blank resource filename.')
-            return false
-        }
         this._fileName = filename
         this._fileType = 0
         let texture = this._director.getTextureCache().addImage(filename)
         let rect    = Rect.ZERO
         rect.size   = texture.getContentSize()
-        return this.initWithTexture(texture, rect)
+        this.initWithTexture(texture, rect)
     }
 
     initWithTexture(texture, rect) {
@@ -54,8 +50,8 @@ export default class Sprite extends Node {
         this._quad.tr.colors = Color4B.WHITE
         this.setTexture(texture)
         this.setTextureRect(rect, rect.size)
-        _recursiveDirty = true;
-        setDirty(true);
+        // _recursiveDirty = true;
+        // setDirty(true);
     }
 
     setTexture(texture) {
@@ -144,9 +140,7 @@ export default class Sprite extends Node {
 
     static create(filename) {
         const sprite = new Sprite()
-        if (sprite.initWithFile(filename)) {
-            return sprite
-        }
-        return null
+        sprite.initWithFile(filename)
+        return sprite
     }
 }

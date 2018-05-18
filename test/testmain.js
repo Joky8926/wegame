@@ -12,6 +12,8 @@ function run() {
 function logic() {
     let scene = Scene.create()
     Director.getInstance().runWithScene(scene)
+    let sp = Sprite.create('images/Common.png')
+    scene.addChild(sp)
 }
 
 function main() {

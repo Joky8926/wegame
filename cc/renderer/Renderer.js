@@ -76,7 +76,7 @@ export default class Renderer {
 
     visitRenderQueue(commands) {
         for (let i = 0; i < commands.length; i++) {
-            processRenderCommand(commands[i])
+            this.processRenderCommand(commands[i])
         }
         this.flush()
     }
@@ -157,9 +157,8 @@ export default class Renderer {
         //     modelView.transformPoint(&(_verts[i + _filledVertex].vertices));
         // }
         const indices = cmd.getIndices()
-        for (let i = 0; i < cmd.getIndexCount(); ++i)
-        {
-            this._indices[this._filledIndex + i] = this._filledVertex + indices[i]
+        for (let i = 0; i < cmd.getIndexCount(); ++i) {
+            this._indices[this._filledIndex + i] = this._filledVertex + indices[i]  // TODO: indices is null
         }
         this._filledVertex  += cmd.getVertexCount()
         this._filledIndex   += cmd.getIndexCount()
